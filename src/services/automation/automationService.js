@@ -242,27 +242,128 @@ async function handlePatientForm(parameters) {
             }, mobileNumber);
         }
 
-        // Calculate and fill in the birth date
+        // Handle date picker calendar widget
         try {
-            await page.waitForSelector('input[name="birthDate"]', { timeout: 5000 });
-            const currentYear = new Date().getFullYear();
-            const birthYear = currentYear - 27;
-            const birthDate = `01/01/${birthYear}`;
-            await page.evaluate((value) => {
-                const input = document.querySelector('input[name="birthDate"]');
-                if (input) input.value = value;
-            }, birthDate);
+            console.log('Handling birth date with calendar widget approach');
+            
+            // First, find and click the calendar icon or date input field to open the calendar
+            try {
+                // Look for the date input field or calendar icon
+                await page.waitForSelector('input[placeholder*="mm/dd"], input[type="date"], input#birthDate, input[name="birthDate"]', { timeout: 5000 });
+                
+                // Click on the field to open the calendar
+                await page.click('input[placeholder*="mm/dd"], input[type="date"], input#birthDate, input[name="birthDate"]');
+                console.log('Clicked on date field to open calendar');
+                await page.waitForTimeout(1000);
+                
+                // If there's a calendar icon, try clicking that too
+                try {
+                    await page.waitForSelector('svg[data-testid="CalendarIcon"], button.calendar-button, .calendar-icon, input[type="date"]::-webkit-calendar-picker-indicator', { timeout: 2000 });
+                    await page.click('svg[data-testid="CalendarIcon"], button.calendar-button, .calendar-icon');
+                    console.log('Clicked on calendar icon');
+                    await page.waitForTimeout(1000);
+                } catch (iconErr) {
+                    console.log('No separate calendar icon found, continuing with date selection');
+                }
+                
+                // Now the calendar should be open, select a date
+                // First, try to find any day in the calendar that's clickable
+                try {
+                    // Wait for calendar to appear
+                    await page.waitForSelector('td[role="gridcell"], .calendar-day, .react-datepicker__day, .MuiPickersDay-root, .day', { timeout: 3000 });
+                    
+                    // Select a date from a previous year to ensure it's a valid birth date
+                    // Try to click on a year selector if available
+                    try {
+                        // Look for year selector button or dropdown
+                        await page.waitForSelector('button.MuiPickersYear-yearButton, .react-datepicker__year-select, .year-selector', { timeout: 2000 });
+                        await page.click('button.MuiPickersYear-yearButton, .react-datepicker__year-select, .year-selector');
+                        console.log('Clicked on year selector');
+                        await page.waitForTimeout(1000);
+                        
+                        // Select a year from 5-20 years ago
+                        const pastYear = new Date().getFullYear() - Math.floor(Math.random() * 15 + 5);
+                        console.log(`Attempting to select year: ${pastYear}`);
+                        
+                        // Try to find and click on the past year
+                        await page.evaluate((year) => {
+                            // Look for elements containing the year text
+                            const yearElements = Array.from(document.querySelectorAll('*')).filter(el => 
+                                el.textContent && el.textContent.trim() === year.toString() && 
+                                (el.tagName === 'BUTTON' || el.tagName === 'OPTION' || el.tagName === 'DIV' || el.tagName === 'SPAN')
+                            );
+                            
+                            if (yearElements.length > 0) {
+                                yearElements[0].click();
+                                return true;
+                            }
+                            return false;
+                        }, pastYear);
+                        
+                        await page.waitForTimeout(1000);
+                    } catch (yearErr) {
+                        console.log('Could not select year specifically:', yearErr.message);
+                    }
+                    
+                    // Now click on a day (try to select 15th of the month as it's usually available)
+                    await page.evaluate(() => {
+                        // Look for day elements with text content "15"
+                        const dayElements = Array.from(document.querySelectorAll('td[role="gridcell"], .calendar-day, .react-datepicker__day, .MuiPickersDay-root, .day')).filter(el => 
+                            el.textContent && el.textContent.trim() === '15'
+                        );
+                        
+                        if (dayElements.length > 0) {
+                            dayElements[0].click();
+                            return true;
+                        }
+                        
+                        // If 15 not found, click on any available day
+                        const anyDay = document.querySelector('td[role="gridcell"], .calendar-day, .react-datepicker__day, .MuiPickersDay-root, .day');
+                        if (anyDay) {
+                            anyDay.click();
+                            return true;
+                        }
+                        
+                        return false;
+                    });
+                    
+                    console.log('Selected a date from the calendar');
+                    await page.waitForTimeout(1000);
+                } catch (calendarErr) {
+                    console.log('Could not interact with calendar days:', calendarErr.message);
+                    
+                    // Fallback: Try to type a date directly
+                    const birthDate = `01/01/${new Date().getFullYear() - 20}`;
+                    await page.keyboard.type(birthDate);
+                    await page.keyboard.press('Tab');
+                    console.log('Typed date directly as fallback');
+                }
+            } catch (dateFieldErr) {
+                console.log('Could not find date field:', dateFieldErr.message);
+                
+                // Last resort: Try direct JavaScript injection
+                const birthDate = `01/01/${new Date().getFullYear() - 20}`;
+                await page.evaluate((date) => {
+                    const dateInputs = document.querySelectorAll('input[type="date"], input[placeholder*="mm/dd"], input#birthDate, input[name="birthDate"]');
+                    for (const input of dateInputs) {
+                        input.value = date;
+                        input.dispatchEvent(new Event('input', { bubbles: true }));
+                        input.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }, birthDate);
+                console.log('Attempted to set date via JavaScript injection');
+            }
+            
+            // Verify if a date was selected
+            const dateValue = await page.evaluate(() => {
+                const dateInput = document.querySelector('input[placeholder*="mm/dd"], input[type="date"], input#birthDate, input[name="birthDate"]');
+                return dateInput ? dateInput.value : 'Not found';
+            });
+            
+            console.log(`Final date field value: ${dateValue}`);
+            
         } catch (err) {
-            console.log('Birth date selector not found, trying alternative approach');
-            // Try by id
-            await page.waitForSelector('input#birthDate', { timeout: 5000 });
-            const currentYear = new Date().getFullYear();
-            const birthYear = currentYear - 27;
-            const birthDate = `01/01/${birthYear}`;
-            await page.evaluate((value) => {
-                const input = document.querySelector('input#birthDate');
-                if (input) input.value = value;
-            }, birthDate);
+            console.error('Failed to set birth date with calendar approach:', err.message);
         }
 
         // Select status from dropdown
