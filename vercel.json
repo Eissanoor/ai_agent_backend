@@ -13,6 +13,8 @@
       }
     ],
     "env": {
-      "PORT": "8000"
+      "PORT": "8000",
+      "NODE_ENV": "production",
+      "SESSION_SECRET": "${SESSION_SECRET}"
     }
   }
