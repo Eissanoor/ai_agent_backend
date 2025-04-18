@@ -180,63 +180,155 @@ async function handlePatientForm(parameters) {
     try {
         const page = await getActivePage();
 
-        // Wait for the patient form page to load
-        await page.waitForSelector('input#patientName', { timeout: 5000 });
+        // Wait for the patient form page to load with increased timeout
+        await page.waitForSelector('input#patientName', { timeout: 10000 });
         
         // Ensure we're on the patient form page
-       // Ensure we're on the patient form page
-const currentUrl = page.url();
-if (!currentUrl.includes('/patient-information')) {
-    await handleNavigation({ route: '/patient-information' });
-    await page.waitForSelector('input#patientName', { timeout: 5000 });
-}
+        const currentUrl = page.url();
+        if (!currentUrl.includes('/patient-information')) {
+            await handleNavigation({ route: '/patient-information' });
+            await page.waitForSelector('input#patientName', { timeout: 10000 });
+        }
 
-// Fill in random data for each field
-await page.waitForSelector('input#patientName');
-await page.type('input#patientName', getRandomName());
+        // Fill in random data for each field
+        await page.waitForSelector('input#patientName');
+        await page.type('input#patientName', getRandomName());
 
-await page.waitForSelector('input#idNumber');
-await page.type('input#idNumber', getRandomIdNumber());
+        await page.waitForSelector('input#idNumber');
+        await page.type('input#idNumber', getRandomIdNumber());
 
-await page.waitForSelector('input#age');
-await page.type('input#age', getRandomAge());
+        // Handle age input with special care
+        await page.waitForSelector('input#age', { timeout: 10000 });
+        
+        // Clear the field first
+        await page.evaluate(() => {
+            const ageInput = document.querySelector('input#age');
+            if (ageInput) ageInput.value = '';
+        });
+        
+        // Type age and ensure it's accepted
+        const age = getRandomAge();
+        console.log(`Entering age: ${age}`);
+        await page.type('input#age', age);
+        
+        // Press Tab to move to next field
+        await page.keyboard.press('Tab');
+        
+        // Wait a moment for the field to process
+        await page.waitForTimeout(1000);
 
-// Select gender
-await page.select('select#sex', Math.random() > 0.5 ? 'M' : 'F');
+        // Select gender
+        await page.waitForSelector('select#sex', { timeout: 10000 });
+        await page.select('select#sex', Math.random() > 0.5 ? 'M' : 'F');
+        await page.waitForTimeout(500); // Wait for dropdown to close
 
-// Fill in the mobile number
-const mobileNumber = `+966${Math.floor(100000000 + Math.random() * 900000000)}`;
-await page.fill('input[name="mobileNumber"]', mobileNumber);
+        // Fill in the mobile number - try different selector approaches
+        try {
+            // Try by name attribute
+            await page.waitForSelector('input[name="mobileNumber"]', { timeout: 5000 });
+            const mobileNumber = `+966${Math.floor(100000000 + Math.random() * 900000000)}`;
+            await page.evaluate((value) => {
+                const input = document.querySelector('input[name="mobileNumber"]');
+                if (input) input.value = value;
+            }, mobileNumber);
+        } catch (err) {
+            console.log('Mobile number selector not found, trying alternative approach');
+            // Try by type attribute (phone inputs often have type="tel")
+            await page.waitForSelector('input[type="tel"]', { timeout: 5000 });
+            const mobileNumber = `+966${Math.floor(100000000 + Math.random() * 900000000)}`;
+            await page.evaluate((value) => {
+                const input = document.querySelector('input[type="tel"]');
+                if (input) input.value = value;
+            }, mobileNumber);
+        }
 
-// Calculate and fill in the birth date
-const currentYear = new Date().getFullYear();
-const birthYear = currentYear - 27;
-const birthDate = `01/01/${birthYear}`; // Default to Jan 1st
-await page.fill('input[name="birthDate"]', birthDate);
+        // Calculate and fill in the birth date
+        try {
+            await page.waitForSelector('input[name="birthDate"]', { timeout: 5000 });
+            const currentYear = new Date().getFullYear();
+            const birthYear = currentYear - 27;
+            const birthDate = `01/01/${birthYear}`;
+            await page.evaluate((value) => {
+                const input = document.querySelector('input[name="birthDate"]');
+                if (input) input.value = value;
+            }, birthDate);
+        } catch (err) {
+            console.log('Birth date selector not found, trying alternative approach');
+            // Try by id
+            await page.waitForSelector('input#birthDate', { timeout: 5000 });
+            const currentYear = new Date().getFullYear();
+            const birthYear = currentYear - 27;
+            const birthDate = `01/01/${birthYear}`;
+            await page.evaluate((value) => {
+                const input = document.querySelector('input#birthDate');
+                if (input) input.value = value;
+            }, birthDate);
+        }
 
-// Select blood group
-await page.select('select#bloodGroup', getRandomBloodGroup());
+        // Select status from dropdown
+        try {
+            await page.waitForSelector('select#status', { timeout: 5000 });
+            const statuses = ['Non-urgent', 'Urgent', 'Critical'];
+            const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+            console.log(`Selecting status: ${randomStatus}`);
+            await page.select('select#status', randomStatus);
+            await page.waitForTimeout(500); // Wait for dropdown to close
+        } catch (err) {
+            console.log('Status selector not found, trying alternative approach');
+            // Try clicking on the dropdown and selecting an option
+            await page.click('div:has(> select#status)');
+            await page.waitForTimeout(500);
+            await page.click('option[value="Non-urgent"]');
+            await page.waitForTimeout(500);
+        }
+        
+        // Select blood group
+        try {
+            await page.waitForSelector('select#bloodGroup', { timeout: 5000 });
+            const bloodGroup = getRandomBloodGroup();
+            console.log(`Selecting blood group: ${bloodGroup}`);
+            await page.select('select#bloodGroup', bloodGroup);
+            await page.waitForTimeout(500); // Wait for dropdown to close
+        } catch (err) {
+            console.log('Blood group selector not found, trying alternative approach');
+            // Try clicking on the dropdown and selecting an option
+            await page.click('div:has(> select#bloodGroup)');
+            await page.waitForTimeout(500);
+            await page.click('option[value="B+"]');
+            await page.waitForTimeout(500);
+        }
 
-// Set MRN number
-await page.type('input#mrnNumber', getRandomMRN());
+        // Set MRN number
+        await page.type('input#mrnNumber', getRandomMRN());
 
-// Set chief complaint
-await page.type('textarea#cheifComplaint', 'General checkup and routine examination');
+        // Set chief complaint
+        await page.type('textarea#cheifComplaint', 'General checkup and routine examination');
 
-// Click the Issue Ticket button
-await page.evaluate(() => {
-    const buttons = Array.from(document.querySelectorAll('button'));
-    const issueButton = buttons.find(button => 
-        button.textContent.includes('Issue Ticket') || 
-        button.textContent.includes('Print Ticket')
-    );
-    if (issueButton) issueButton.click();
-});
+        // Wait for a moment to ensure all fields are filled
+        await page.waitForTimeout(2000);
+
+        // Click the Issue Ticket button
+        await page.evaluate(() => {
+            const buttons = Array.from(document.querySelectorAll('button'));
+            const issueButton = buttons.find(button => 
+                button.textContent.includes('Issue Ticket') || 
+                button.textContent.includes('Print Ticket')
+            );
+            console.log('Found button:', issueButton ? issueButton.textContent : 'No button found');
+            if (issueButton) {
+                console.log('Clicking Issue Ticket button');
+                issueButton.click();
+            }
+        });
+        
+        // Additional wait after clicking the button
+        await page.waitForTimeout(3000);
 
         return {
             message: 'Successfully filled patient form and submitted'
         };
     } catch (error) {
+        console.error(`Failed to fill patient form: ${error.message}`);
         throw new Error(`Failed to fill patient form: ${error.message}`);
     }
 }
