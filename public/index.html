@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Automation Control</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Voice Automation Control</h1>
+    <button id="startButton">Start Recording</button>
+    <div id="status" class="status"></div>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const statusDiv = document.getElementById('status');
+        let mediaRecorder;
+        let audioChunks = [];
+
+        startButton.addEventListener('click', async () => {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                startButton.textContent = 'Start Recording';
+                return;
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                
+                mediaRecorder.ondataavailable = (event) => {
+                    audioChunks.push(event.data);
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                    const formData = new FormData();
+                    formData.append('audio', audioBlob);
+                    
+                    try {
+                        const response = await fetch('http://localhost:8000/voice-command', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        statusDiv.textContent = result.message;
+                        statusDiv.className = `status ${result.success ? 'success' : 'error'}`;
+                    } catch (error) {
+                        statusDiv.textContent = `Error: ${error.message}`;
+                        statusDiv.className = 'status error';
+                    }
+                    
+                    audioChunks = [];
+                };
+
+                mediaRecorder.start();
+                startButton.textContent = 'Stop Recording';
+                statusDiv.textContent = 'Recording...';
+                statusDiv.className = 'status';
+            } catch (error) {
+                statusDiv.textContent = `Error: ${error.message}`;
+                statusDiv.className = 'status error';
+            }
+        });
+    </script>
+</body>
+</html> 
