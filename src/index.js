@@ -18,12 +18,9 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(sessionMiddleware);
 
-// CORS middleware  
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
+const cors = require('cors');
+// Allow CORS everywhere for all origins and methods
+app.use(cors());
 
 // Routes
 app.use('/api/text', textRoutes);
