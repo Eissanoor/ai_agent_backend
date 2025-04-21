@@ -120,8 +120,475 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  email: 'email',
+  password: 'password',
   name: 'name',
+  deptcode: 'deptcode',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  email: 'email'
+};
+
+exports.Prisma.BedScalarFieldEnum = {
+  id: 'id',
+  bedNumber: 'bedNumber',
+  bedStatus: 'bedStatus',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.JourneyScalarFieldEnum = {
+  id: 'id',
+  isActive: 'isActive',
+  firstCallTime: 'firstCallTime',
+  vitalTime: 'vitalTime',
+  assignDeptTime: 'assignDeptTime',
+  secondCallTime: 'secondCallTime',
+  beginTime: 'beginTime',
+  endTime: 'endTime',
+  patientId: 'patientId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PatientScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  nationality: 'nationality',
+  sex: 'sex',
+  idNumber: 'idNumber',
+  age: 'age',
+  mobileNumber: 'mobileNumber',
+  status: 'status',
+  cheifComplaint: 'cheifComplaint',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  ticket: 'ticket',
+  userId: 'userId',
+  callPatient: 'callPatient',
+  state: 'state',
+  barcode: 'barcode',
+  departmentId: 'departmentId',
+  ticketNumber: 'ticketNumber',
+  bedId: 'bedId',
+  beginTime: 'beginTime',
+  endTime: 'endTime',
+  birthDate: 'birthDate',
+  bloodGroup: 'bloodGroup',
+  mrnNumber: 'mrnNumber',
+  remarks: 'remarks',
+  assignDeptTime: 'assignDeptTime',
+  firstCallTime: 'firstCallTime',
+  secondCallTime: 'secondCallTime',
+  vitalTime: 'vitalTime',
+  registrationDate: 'registrationDate'
+};
+
+exports.Prisma.PatientCountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  counter: 'counter',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RefreshTokenScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  userId: 'userId',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RoleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  description: 'description',
+  route: 'route'
+};
+
+exports.Prisma.TblAdmissionScalarFieldEnum = {
+  tblAdmissionID: 'tblAdmissionID',
+  admissioncode: 'admissioncode',
+  admissionname: 'admissionname'
+};
+
+exports.Prisma.TblAppScalarFieldEnum = {
+  tblAppID: 'tblAppID',
+  AppID: 'AppID',
+  ApplicationName: 'ApplicationName'
+};
+
+exports.Prisma.TblAppAuthScalarFieldEnum = {
+  tblAppAuthID: 'tblAppAuthID',
+  appAuthID: 'appAuthID',
+  AppID: 'AppID',
+  userid: 'userid',
+  last_update: 'last_update'
+};
+
+exports.Prisma.TblAppModeAuthScalarFieldEnum = {
+  tblUserAppModAuthID: 'tblUserAppModAuthID',
+  moduleID: 'moduleID',
+  UserappModAuthID: 'UserappModAuthID',
+  userid: 'userid',
+  last_update: 'last_update'
+};
+
+exports.Prisma.TblAppModulesScalarFieldEnum = {
+  tblAppModulesID: 'tblAppModulesID',
+  moduleID: 'moduleID',
+  AppID: 'AppID',
+  ModuleName: 'ModuleName'
+};
+
+exports.Prisma.TblConsultScalarFieldEnum = {
+  tblConsultID: 'tblConsultID',
+  tblconsultspecialtyid: 'tblconsultspecialtyid',
+  specialtyname: 'specialtyname'
+};
+
+exports.Prisma.TblCounterScalarFieldEnum = {
+  tblCounterID: 'tblCounterID',
+  currentCount: 'currentCount',
+  ratz: 'ratz',
+  acu: 'acu',
+  ucc: 'ucc',
+  triageout: 'triageout'
+};
+
+exports.Prisma.TblDepartmentScalarFieldEnum = {
+  tblDepartmentID: 'tblDepartmentID',
+  deptcode: 'deptcode',
+  deptname: 'deptname'
+};
+
+exports.Prisma.TblLocationScalarFieldEnum = {
+  tblLocationID: 'tblLocationID',
+  loccode: 'loccode',
+  deptcode: 'deptcode',
+  locationname: 'locationname'
+};
+
+exports.Prisma.TblLocationSessionScalarFieldEnum = {
+  tblLocationSessionID: 'tblLocationSessionID',
+  loccode: 'loccode',
+  deptcode: 'deptcode',
+  qnumber: 'qnumber',
+  start_dt: 'start_dt',
+  finish_dt: 'finish_dt',
+  tblQueueID: 'tblQueueID',
+  name: 'name',
+  dept_counter: 'dept_counter',
+  locationname: 'locationname',
+  status: 'status'
+};
+
+exports.Prisma.TbllocationsessionArchieveScalarFieldEnum = {
+  tblLocationSessionID: 'tblLocationSessionID',
+  loccode: 'loccode',
+  deptcode: 'deptcode',
+  qnumber: 'qnumber',
+  start_dt: 'start_dt',
+  finish_dt: 'finish_dt',
+  tblQueueID: 'tblQueueID',
+  name: 'name',
+  dept_counter: 'dept_counter',
+  locationname: 'locationname',
+  status: 'status'
+};
+
+exports.Prisma.TblQueueScalarFieldEnum = {
+  tblQueueID: 'tblQueueID',
+  deptcode: 'deptcode',
+  qnumber: 'qnumber',
+  issued_dt: 'issued_dt',
+  start_dt: 'start_dt',
+  finish_dt: 'finish_dt',
+  status: 'status',
+  waiting: 'waiting',
+  barcode: 'barcode',
+  deptname: 'deptname',
+  name: 'name',
+  userid: 'userid',
+  locationname: 'locationname',
+  nationality: 'nationality',
+  id: 'id',
+  patient_age: 'patient_age',
+  gender: 'gender',
+  complain: 'complain',
+  triage_dt: 'triage_dt',
+  bp: 'bp',
+  temp: 'temp',
+  hr: 'hr',
+  rr: 'rr',
+  spo2: 'spo2',
+  rbs: 'rbs',
+  height: 'height',
+  weight: 'weight',
+  allergies: 'allergies',
+  bedassignment: 'bedassignment',
+  override: 'override',
+  critical: 'critical',
+  criticalmsg: 'criticalmsg',
+  category: 'category',
+  dept_counter: 'dept_counter',
+  toremarks: 'toremarks',
+  last_update: 'last_update',
+  mobileno: 'mobileno',
+  returnvisit72Hrs: 'returnvisit72Hrs',
+  admitted: 'admitted',
+  admittedIn: 'admittedIn',
+  consulted: 'consulted',
+  consultspecialtyid: 'consultspecialtyid',
+  consultassign: 'consultassign',
+  consultarrive: 'consultarrive',
+  consultdesicion: 'consultdesicion',
+  transferred: 'transferred',
+  transferid: 'transferid',
+  Pmh: 'Pmh',
+  ticket: 'ticket'
+};
+
+exports.Prisma.TblQueueArchieveScalarFieldEnum = {
+  tblQueueID: 'tblQueueID',
+  deptcode: 'deptcode',
+  qnumber: 'qnumber',
+  issued_dt: 'issued_dt',
+  start_dt: 'start_dt',
+  finish_dt: 'finish_dt',
+  status: 'status',
+  waiting: 'waiting',
+  barcode: 'barcode',
+  deptname: 'deptname',
+  name: 'name',
+  userid: 'userid',
+  locationname: 'locationname',
+  nationality: 'nationality',
+  id: 'id',
+  patient_age: 'patient_age',
+  gender: 'gender',
+  complain: 'complain',
+  triage_dt: 'triage_dt',
+  bp: 'bp',
+  temp: 'temp',
+  hr: 'hr',
+  rr: 'rr',
+  spo2: 'spo2',
+  rbs: 'rbs',
+  height: 'height',
+  weight: 'weight',
+  allergies: 'allergies',
+  bedassignment: 'bedassignment',
+  override: 'override',
+  critical: 'critical',
+  criticalmsg: 'criticalmsg',
+  category: 'category',
+  dept_counter: 'dept_counter',
+  toremarks: 'toremarks',
+  last_update: 'last_update',
+  mobileno: 'mobileno',
+  returnvisit72Hrs: 'returnvisit72Hrs',
+  admitted: 'admitted',
+  admittedIn: 'admittedIn',
+  consulted: 'consulted',
+  consultspecialtyid: 'consultspecialtyid',
+  consultassign: 'consultassign',
+  consultarrive: 'consultarrive',
+  consultdesicion: 'consultdesicion',
+  transferred: 'transferred',
+  transferid: 'transferid',
+  ticket: 'ticket',
+  Pmh: 'Pmh'
+};
+
+exports.Prisma.TblQueueArchieveTempScalarFieldEnum = {
+  tblQueueID: 'tblQueueID',
+  deptcode: 'deptcode',
+  qnumber: 'qnumber',
+  issued_dt: 'issued_dt',
+  start_dt: 'start_dt',
+  finish_dt: 'finish_dt',
+  status: 'status',
+  waiting: 'waiting',
+  barcode: 'barcode',
+  deptname: 'deptname',
+  name: 'name',
+  userid: 'userid',
+  locationname: 'locationname',
+  nationality: 'nationality',
+  id: 'id',
+  patient_age: 'patient_age',
+  gender: 'gender',
+  complain: 'complain',
+  triage_dt: 'triage_dt',
+  bp: 'bp',
+  temp: 'temp',
+  hr: 'hr',
+  rr: 'rr',
+  spo2: 'spo2',
+  rbs: 'rbs',
+  height: 'height',
+  weight: 'weight',
+  allergies: 'allergies',
+  bedassignment: 'bedassignment',
+  override: 'override',
+  critical: 'critical',
+  criticalmsg: 'criticalmsg',
+  category: 'category',
+  dept_counter: 'dept_counter',
+  toremarks: 'toremarks',
+  last_update: 'last_update',
+  mobileno: 'mobileno'
+};
+
+exports.Prisma.TblQueuePulmoScalarFieldEnum = {
+  tblQueueID: 'tblQueueID',
+  deptcode: 'deptcode',
+  qnumber: 'qnumber',
+  issued_dt: 'issued_dt',
+  start_dt: 'start_dt',
+  finish_dt: 'finish_dt',
+  status: 'status',
+  waiting: 'waiting',
+  barcode: 'barcode',
+  deptname: 'deptname',
+  name: 'name',
+  userid: 'userid',
+  locationname: 'locationname',
+  nationality: 'nationality',
+  id: 'id',
+  patient_age: 'patient_age',
+  gender: 'gender',
+  complain: 'complain',
+  triage_dt: 'triage_dt',
+  bp: 'bp',
+  temp: 'temp',
+  hr: 'hr',
+  rr: 'rr',
+  spo2: 'spo2',
+  rbs: 'rbs',
+  height: 'height',
+  weight: 'weight',
+  allergies: 'allergies',
+  bedassignment: 'bedassignment',
+  override: 'override',
+  critical: 'critical',
+  criticalmsg: 'criticalmsg',
+  category: 'category',
+  dept_counter: 'dept_counter',
+  toremarks: 'toremarks',
+  last_update: 'last_update',
+  mobileno: 'mobileno',
+  returnvisit72Hrs: 'returnvisit72Hrs',
+  admitted: 'admitted',
+  admittedIn: 'admittedIn',
+  consulted: 'consulted',
+  consultspecialtyid: 'consultspecialtyid',
+  consultassign: 'consultassign',
+  consultarrive: 'consultarrive',
+  consultdesicion: 'consultdesicion',
+  transferred: 'transferred',
+  transferid: 'transferid'
+};
+
+exports.Prisma.TblQueueSessionScalarFieldEnum = {
+  tblLocationSessionID: 'tblLocationSessionID',
+  deptcode: 'deptcode',
+  qnumber: 'qnumber',
+  tblQueueID: 'tblQueueID'
+};
+
+exports.Prisma.TblQueueTransferDeptScalarFieldEnum = {
+  tblQueueTransferDeptID: 'tblQueueTransferDeptID',
+  barcode: 'barcode',
+  fromdeptcode: 'fromdeptcode',
+  todeptcode: 'todeptcode',
+  last_update: 'last_update',
+  issued_dt: 'issued_dt'
+};
+
+exports.Prisma.TblQueueWaitScalarFieldEnum = {
+  tblQueueID: 'tblQueueID',
+  deptcode: 'deptcode',
+  qnumber: 'qnumber',
+  issued_dt: 'issued_dt',
+  start_dt: 'start_dt',
+  finish_dt: 'finish_dt',
+  status: 'status',
+  waiting: 'waiting',
+  barcode: 'barcode',
+  deptname: 'deptname',
+  name: 'name',
+  userid: 'userid',
+  locationname: 'locationname',
+  queueID: 'queueID',
+  dept_counter: 'dept_counter'
+};
+
+exports.Prisma.TblSubLocationScalarFieldEnum = {
+  tblLocationID: 'tblLocationID',
+  loccode: 'loccode',
+  deptcode: 'deptcode',
+  locationname: 'locationname',
+  status: 'status'
+};
+
+exports.Prisma.TblTransferScalarFieldEnum = {
+  tblTransferID: 'tblTransferID',
+  transferid: 'transferid',
+  transfername: 'transfername'
+};
+
+exports.Prisma.TblUserDepartmentAuthScalarFieldEnum = {
+  tblUserDepartmentAuthID: 'tblUserDepartmentAuthID',
+  authiD: 'authiD',
+  deptcode: 'deptcode',
+  userid: 'userid',
+  last_update: 'last_update'
+};
+
+exports.Prisma.TblUserOverrideAuthScalarFieldEnum = {
+  tblUserOverrideAuthID: 'tblUserOverrideAuthID',
+  appAuthID: 'appAuthID',
+  userid: 'userid',
+  last_update: 'last_update'
+};
+
+exports.Prisma.PromptScalarFieldEnum = {
+  id: 'id',
+  text: 'text',
+  intent: 'intent',
+  parameters: 'parameters',
+  hasAction: 'hasAction',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.TblUsersScalarFieldEnum = {
+  tblUsersID: 'tblUsersID',
+  userid: 'userid',
+  password: 'password',
+  name: 'name',
+  deptcode: 'deptcode',
+  date: 'date'
+};
+
+exports.Prisma.VitalSignScalarFieldEnum = {
+  id: 'id',
+  patientId: 'patientId',
+  bp: 'bp',
+  height: 'height',
+  temp: 'temp',
+  spo2: 'spo2',
+  weight: 'weight',
+  hr: 'hr',
+  rbs: 'rbs',
+  rr: 'rr',
+  timeVs: 'timeVs',
+  allergies: 'allergies',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -138,7 +605,38 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Bed: 'Bed',
+  Journey: 'Journey',
+  Patient: 'Patient',
+  PatientCount: 'PatientCount',
+  RefreshToken: 'RefreshToken',
+  Role: 'Role',
+  tblAdmission: 'tblAdmission',
+  tblApp: 'tblApp',
+  tblAppAuth: 'tblAppAuth',
+  tblAppModeAuth: 'tblAppModeAuth',
+  tblAppModules: 'tblAppModules',
+  tblConsult: 'tblConsult',
+  tblCounter: 'tblCounter',
+  tblDepartment: 'tblDepartment',
+  tblLocation: 'tblLocation',
+  tblLocationSession: 'tblLocationSession',
+  tbllocationsessionArchieve: 'tbllocationsessionArchieve',
+  tblQueue: 'tblQueue',
+  tblQueueArchieve: 'tblQueueArchieve',
+  tblQueueArchieveTemp: 'tblQueueArchieveTemp',
+  tblQueuePulmo: 'tblQueuePulmo',
+  tblQueueSession: 'tblQueueSession',
+  tblQueueTransferDept: 'tblQueueTransferDept',
+  tblQueueWait: 'tblQueueWait',
+  tblSubLocation: 'tblSubLocation',
+  tblTransfer: 'tblTransfer',
+  tblUserDepartmentAuth: 'tblUserDepartmentAuth',
+  tblUserOverrideAuth: 'tblUserOverrideAuth',
+  Prompt: 'Prompt',
+  tblUsers: 'tblUsers',
+  VitalSign: 'VitalSign'
 };
 
 /**

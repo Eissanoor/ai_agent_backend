@@ -20,6 +20,7 @@ model User {
   PatientCount PatientCount[]
   RefreshToken RefreshToken[]
   Role         Role[]         @relation("UserRoles")
+  Prompt       Prompt[]
 }
 
 model Bed {
@@ -518,6 +519,18 @@ model tblUserOverrideAuth {
   appAuthID             Decimal?  @unique(map: "UQ__tblAppAu__9EB469957925D83E") @default(0, map: "DF__tblAppAut__appAu__59C55456") @db.Decimal(10, 0)
   userid                String?   @unique(map: "UQ__tblAppAu__CBA1B2560AC93C33") @default("", map: "DF__tblAppAut__useri__5AB9788F") @db.VarChar(10)
   last_update           DateTime?
+}
+
+model Prompt {
+  id           String    @id @default(uuid())
+  text         String    @db.Text
+  intent       String?
+  parameters   String?   @db.Text
+  hasAction    Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  userId       String?
+  User         User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model tblUsers {

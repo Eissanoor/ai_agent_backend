@@ -34,7 +34,20 @@ async function handleAutomation(input) {
             throw new Error('Invalid input format');
         }
 
-        const { intent, parameters } = input;
+        const { intent, parameters, hasAction, suggestions } = input;
+
+        // If there's no action to perform but we have suggestions, return them
+        if (!hasAction && suggestions && suggestions.length > 0) {
+            return {
+                success: true,
+                result: {
+                    message: 'No specific action detected in your prompt. Here are some suggestions:',
+                    suggestions
+                },
+                intent: 'suggestions',
+                hasAction: false
+            };
+        }
 
         // Get browser instance (creates if doesn't exist)
         const browser = await getBrowser();
@@ -48,10 +61,49 @@ async function handleAutomation(input) {
         return {
             success: true,
             result,
-            intent
+            intent,
+            hasAction: true
         };
     } catch (error) {
         throw new Error(`Automation error: ${error.message}`);
+    }
+}
+
+async function handleSuggestionSelection(selectedSuggestion) {
+    try {
+        // Map the selected suggestion to an intent and parameters
+        let intent = 'unknown';
+        let parameters = {};
+        
+        // Process the suggestion text to determine the appropriate action
+        const suggestion = selectedSuggestion.toLowerCase();
+        
+        if (suggestion.includes('fill') && suggestion.includes('patient form')) {
+            intent = 'fill_patient_form';
+        } else if (suggestion.includes('login')) {
+            intent = 'login';
+            // For login, we'll need to prompt for credentials in the UI
+            parameters = { requireCredentials: true };
+        } else if (suggestion.includes('navigate')) {
+            intent = 'navigate';
+            
+            // Extract the destination if specified
+            if (suggestion.includes('patient information')) {
+                parameters = { route: '/patient-information' };
+            } else {
+                // For general navigation, we'll need to prompt for the destination in the UI
+                parameters = { requireDestination: true };
+            }
+        }
+        
+        // Return the mapped intent and parameters
+        return {
+            intent,
+            parameters,
+            hasAction: true
+        };
+    } catch (error) {
+        throw new Error(`Suggestion processing error: ${error.message}`);
     }
 }
 
@@ -434,4 +486,4 @@ async function handlePatientForm(parameters) {
     }
 }
 
-module.exports = { handleAutomation, handleNavigation, handlePatientForm, getActivePage };
+module.exports = { handleAutomation, handleNavigation, handlePatientForm, getActivePage, handleSuggestionSelection };
